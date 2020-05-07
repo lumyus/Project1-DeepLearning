@@ -164,7 +164,7 @@ def train_model_advanced_cnn(model, train_input, train_target, train_classes, va
     return model, training_loss, training_accuracy, validation_accuracy
 
 
-def evaluate_simple_cnn(nb_pairs, batch_size, nb_epochs, print_step, simple_cnn):
+def evaluate_simple_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_layers, simple_cnn):
     if torch.cuda.is_available():
         print('\nUsing GPU...\n')
         device = torch.device('cuda')
@@ -172,7 +172,7 @@ def evaluate_simple_cnn(nb_pairs, batch_size, nb_epochs, print_step, simple_cnn)
         print('\nUsing CPU...\n')
         device = torch.device('cpu')
 
-    model = simple_cnn()
+    model = simple_cnn(hidden_layers)
 
     # Print model characteristics
     print(model)

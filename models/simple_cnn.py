@@ -2,44 +2,52 @@ from torch import nn
 from torch.nn import functional as F
 
 
-# ********************************* Define Architecture of the model
-class SimpleConvNet(nn.Module):
-    def __init__(self):
-        super(SimpleConvNet, self).__init__()
-        # Input channels = 2, output channels = 32
+class SimpleConvolutionalNeuralNetwork(nn.Module):
+
+    def __init__(self, hidden_layers):
+        super(SimpleConvolutionalNeuralNetwork, self).__init__()
+
+        # First layer
+        # 2 channel as input
+        # 32 channels as output
+
         self.layer1 = nn.Sequential(
             nn.Conv2d(2, 32, kernel_size=5, stride=1, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
 
-        # Input channels = 32, output channels = 64
+        # Second layer
+        # 32 channel as input
+        # 64 channels as output
+
         self.layer2 = nn.Sequential(
             nn.Conv2d(32, 64, kernel_size=4, stride=1, padding=2),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
 
-        # Formula to get out_put size (in_size - kernel_size + 2*(padding)) / stride) + 1
-        # first layer (14-5+2*2)/1 +1 = 14/2 = 7
-        # second layer (7 -4 +2*2)/1 +1 = 8/2 = 4
-        # 4 * 4 * 64 input features, 1000 output features
-        self.fc1 = nn.Linear(4 * 4 * 64, 1000)
+        # Calculation of output channel size provided by TA (in_channel_size - kernel_size + 2*(padding)) / stride) + 1
+        # First layer (14-5+2*2)/1 +1 = 14/2 = 7
+        # Second layer (7 -4 +2*2)/1 +1 = 8/2 = 4
 
-        # 1000 input features, 2 output features
-        self.fc2 = nn.Linear(1000, 2)
+        # 4 * 4 * 64 input features of fully connected layer 1
+        self.fc1 = nn.Linear(4 * 4 * 64, hidden_layers)
+
+        # 10 output features of fully connected layer 2
+        self.fc2 = nn.Linear(hidden_layers, 10)
 
     def forward(self, x):
-        # Activation of the first convolution
-        # size (batch, 32 ,7 ,7)
+        # Activation of first convolution
+        # Size: (batch_size, 32 ,7 ,7)
         out = self.layer1(x)
 
-        # Activation of the first convolution
-        # size (batch, 64 ,4 ,4)
+        # Activation of second convolution
+        # Size: (batch_size, 64 ,4 ,4)
         out = self.layer2(out)
 
-        # Reshape (batch, 1024)
+        # Reshape to match dropout expectancy (batch_size, 1024)
         out = out.reshape(out.size(0), -1)
 
-        # Relu activation of last layer
+        # ReLU activation of last layer
         out = F.relu(self.fc1(out.view(-1, 4 * 4 * 64)))
 
         out = self.fc2(out)

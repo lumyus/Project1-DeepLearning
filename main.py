@@ -16,12 +16,12 @@ if __name__ == "__main__":
     print('\nTraining and Testing all models. Consider grabbing a coffee...')
 
     print('\nThe SimpleCNN is being trained and tested...')
-    error_rate_simple_cnn = utils.evaluate_simple_cnn(1000, batch_size, nb_epochs, print_step,
-                                                      simple_cnn.SimpleConvNet)
+    error_rate_simple_cnn = utils.evaluate_simple_cnn(1000, batch_size, nb_epochs, print_step, hidden_layers,
+                                                      simple_cnn.SimpleConvolutionalNeuralNetwork)
 
     print('\nThe AdvancedCNN is being trained and tested...')
     error_rate_advanced_cnn = utils.evaluate_advanced_cnn(1000, batch_size, nb_epochs, print_step, hidden_layers,
-                                              advanced_cnn.AdvancedConvNet)
+                                                          advanced_cnn.AdvancedConvolutionalNeuralNetwork)
 
     print('\nTraining and Testing for all models has been completed!')
     print('Testing 1000 pairs resulted in the following accuracies:')
