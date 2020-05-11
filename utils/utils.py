@@ -5,51 +5,6 @@ from torch import optim
 from utils import dlc_practical_prologue as prologue
 
 
-def calculate_incorrect_classifications_simple_cnn(model, input, target, batch_size):
-    incorrect_classifications = 0  # Amount of incorrect classifications
-
-    for batch in range(0, input.size(0), batch_size):
-        output = model(input.narrow(0, batch, batch_size))
-        _, predicted_classes = torch.max(output.data, 1)
-
-        for i in range(batch_size):
-            if target.data[batch + i] != predicted_classes[i]:
-                incorrect_classifications = incorrect_classifications + 1
-
-    return incorrect_classifications
-
-
-def calculate_incorrect_classifications_advanced_cnn(model, input, target, batch_size):
-    incorrect_classifications = 0  # Amount of incorrect classifications
-    first_channel = []  # First channel testing
-    second_channel = []  # Second channel testing
-    predictions = []
-
-    # Get the prediction for each channel
-    for batch in range(0, input.size(0), batch_size):
-        output = model(input.narrow(0, batch, batch_size))
-        _, predicted_classes = torch.max(output.data, 1)
-        for i in range(batch_size):
-            if i % 2 == 0:  # Load the testing results into two arrays corresponding to the two channels
-                first_channel.append(predicted_classes[i])
-            else:
-                second_channel.append(predicted_classes[i])
-
-    # Compare if the first channel's number is greater than the second channel's (purely logical)
-    for i in range(len(target)):
-
-        if first_channel[i] > second_channel[i]:
-            predictions.append(0)
-        else:
-            predictions.append(1)
-
-    # Evaluate the result with the target result
-        if target.data[i] != predictions[i]:
-            incorrect_classifications = incorrect_classifications + 1
-
-    return incorrect_classifications
-
-
 def train_simple_cnn(model, train_input, train_target, validation_input, validation_target, device, epochs,
                      batch_size, print_epochs):
     print("\nStarting to train the SimpleCNN!")
@@ -71,11 +26,11 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
 
     for epoch in range(epochs + 1):
 
-        for i in range(0, train_input.size(0), batch_size):  # train_input.size(0) = 900
+        for batch in range(0, train_input.size(0), batch_size):  # train_input.size(0) = 900
 
-            output = model(train_input.narrow(0, i, batch_size))
+            output = model(train_input.narrow(0, batch, batch_size))
 
-            loss = criterion(output, train_target.narrow(0, i, batch_size))
+            loss = criterion(output, train_target.narrow(0, batch, batch_size))
 
             optimizer.zero_grad()
             loss.backward()
@@ -91,8 +46,10 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
 
             # Calculate training accuracy and print
 
-            accuracy = (calculate_incorrect_classifications_simple_cnn(model, train_input, train_target, batch_size) / (
-                train_input.size(0))) * 100
+            accuracy = \
+                100 * (calculate_incorrect_classifications_simple_cnn(model, train_input,train_target, batch_size)
+                       / (train_input.size(0)))
+
             training_accuracy.append(accuracy)
 
             print(f'Training Accuracy : {100 - accuracy:.4f}%')
@@ -306,3 +263,48 @@ def handle_advanced_cnn(image_pairs, batch_size, epochs, print_epochs, hidden_la
     print(f'\nTesting Completed!')
 
     return error_rate
+
+
+def calculate_incorrect_classifications_simple_cnn(model, input, target, batch_size):
+    incorrect_classifications = 0  # Amount of incorrect classifications
+
+    for batch in range(0, input.size(0), batch_size):
+        output = model(input.narrow(0, batch, batch_size))
+        _, predicted_classes = torch.max(output.data, 1)
+
+        for i in range(batch_size):
+            if target.data[batch + i] != predicted_classes[i]:
+                incorrect_classifications += 1
+
+    return incorrect_classifications
+
+
+def calculate_incorrect_classifications_advanced_cnn(model, input, target, batch_size):
+    incorrect_classifications = 0  # Amount of incorrect classifications
+    first_channel = []  # First channel testing
+    second_channel = []  # Second channel testing
+    predictions = []
+
+    # Get the prediction for each channel
+    for batch in range(0, input.size(0), batch_size):
+        output = model(input.narrow(0, batch, batch_size))
+        _, predicted_classes = torch.max(output.data, 1)
+        for i in range(batch_size):
+            if i % 2 == 0:  # Load the testing results into two arrays corresponding to the two channels
+                first_channel.append(predicted_classes[i])
+            else:
+                second_channel.append(predicted_classes[i])
+
+    # Compare if the first channel's number is greater than the second channel's (purely logical)
+    for i in range(len(target)):
+
+        if first_channel[i] > second_channel[i]:
+            predictions.append(0)
+        else:
+            predictions.append(1)
+
+        # Evaluate the result with the target result
+        if target.data[i] != predictions[i]:
+            incorrect_classifications += 1
+
+    return incorrect_classifications
