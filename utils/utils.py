@@ -5,24 +5,27 @@ from torch import optim
 from utils import dlc_practical_prologue as prologue
 
 
-def calculate_amount_errors_simple_cnn(model, input, target, batch_size):
-    nb_data_errors = 0  # Amount of incorrect classifications
-    for b in range(0, input.size(0), batch_size):
-        output = model(input.narrow(0, b, batch_size))
+def calculate_incorrect_classifications_simple_cnn(model, input, target, batch_size):
+    incorrect_classifications = 0  # Amount of incorrect classifications
+
+    for batch in range(0, input.size(0), batch_size):
+        output = model(input.narrow(0, batch, batch_size))
         _, predicted_classes = torch.max(output.data, 1)
         for k in range(batch_size):
-            if target.data[b + k] != predicted_classes[k]:
-                nb_data_errors = nb_data_errors + 1
-    return nb_data_errors
+            if target.data[batch + k] != predicted_classes[k]:
+                incorrect_classifications = incorrect_classifications + 1
+    return incorrect_classifications
 
 
-def calculate_amount_errors_advanced_cnn(model, input, target, batch_size):
-    nb_data_errors = 0  # Amount of incorrect classifications
+def calculate_incorrect_classifications_advanced_cnn(model, input, target, batch_size):
+    incorrect_classifications = 0  # Amount of incorrect classifications
     first_channel = []  # First channel testing
     second_channel = []  # Second channel testing
     result = []
-    for b in range(0, input.size(0), batch_size):
-        output = model(input.narrow(0, b, batch_size))
+
+    # Get the prediction for each channel
+    for batch in range(0, input.size(0), batch_size):
+        output = model(input.narrow(0, batch, batch_size))
         _, predicted_classes = torch.max(output.data, 1)
         for k in range(batch_size):
             if k % 2 == 0:  # Load the testing results into two arrays corresponding to the two channels
@@ -30,17 +33,19 @@ def calculate_amount_errors_advanced_cnn(model, input, target, batch_size):
             else:
                 second_channel.append(predicted_classes[k])
 
+    # Compare if the first channel's number is greater than the second channel's (purely logical)
     for x in range(len(target)):
-        if first_channel[x] > second_channel[
-            x]:  # Compare if the first channel's number is greater than the second channel's
+
+        if first_channel[x] > second_channel[x]:
             result.append(0)
         else:
             result.append(1)
 
+    # Evaluate the result with the target result
         if target.data[x] != result[x]:
-            nb_data_errors = nb_data_errors + 1
+            incorrect_classifications = incorrect_classifications + 1
 
-    return nb_data_errors
+    return incorrect_classifications
 
 
 def train_simple_cnn(model, train_input, train_target, validation_input, validation_target, device, nb_epochs,
@@ -84,7 +89,7 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
 
             # Calculate training accuracy and print
 
-            accuracy = (calculate_amount_errors_simple_cnn(model, train_input, train_target, batch_size) / (
+            accuracy = (calculate_incorrect_classifications_simple_cnn(model, train_input, train_target, batch_size) / (
                 train_input.size(0))) * 100
             training_accuracy.append(accuracy)
 
@@ -92,8 +97,9 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
 
             # Calculate validation accuracy and print
 
-            accuracy = (calculate_amount_errors_simple_cnn(model, validation_input, validation_target, batch_size) / (
-                validation_input.size(0))) * 100
+            accuracy = (calculate_incorrect_classifications_simple_cnn(model, validation_input, validation_target,
+                                                                       batch_size) / (
+                            validation_input.size(0))) * 100
             validation_accuracy.append(accuracy)
 
             print(f'Validation Accuracy : {100 - accuracy:.4f}%')
@@ -144,16 +150,18 @@ def train_model_advanced_cnn(model, train_input, train_target, train_classes, va
 
             # Calculate training accuracy and print
 
-            accuracy = (calculate_amount_errors_advanced_cnn(model, train_input, train_target, batch_size) / (
-                train_input.size(0))) * 100
+            accuracy = (calculate_incorrect_classifications_advanced_cnn(model, train_input, train_target,
+                                                                         batch_size) / (
+                            train_input.size(0))) * 100
             training_accuracy.append(accuracy)
 
             print(f'Training Accuracy : {100 - accuracy:.4f}%')
 
             # Calculate validation accuracy and print
 
-            accuracy = (calculate_amount_errors_advanced_cnn(model, validation_input, validation_target, batch_size) / (
-                validation_input.size(0))) * 100
+            accuracy = (calculate_incorrect_classifications_advanced_cnn(model, validation_input, validation_target,
+                                                                         batch_size) / (
+                            validation_input.size(0))) * 100
             validation_accuracy.append(accuracy)
 
             print(f'Validation Accuracy : {100 - accuracy:.4f}%')
@@ -164,7 +172,7 @@ def train_model_advanced_cnn(model, train_input, train_target, train_classes, va
     return model, training_loss, training_accuracy, validation_accuracy
 
 
-def evaluate_simple_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_layers, simple_cnn):
+def handle_simple_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_layers, simple_cnn):
     if torch.cuda.is_available():
         print('\nUsing GPU...\n')
         device = torch.device('cuda')
@@ -218,7 +226,7 @@ def evaluate_simple_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_laye
 
     model.eval()
 
-    errors_in_testing = calculate_amount_errors_simple_cnn(model, test_input, test_target, batch_size)
+    errors_in_testing = calculate_incorrect_classifications_simple_cnn(model, test_input, test_target, batch_size)
 
     total_testing = test_input.size(0)
     error_rate = 100 * errors_in_testing / total_testing
@@ -228,7 +236,7 @@ def evaluate_simple_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_laye
     return error_rate
 
 
-def evaluate_advanced_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_layers, advanced_cnn):
+def handle_advanced_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_layers, advanced_cnn):
     if torch.cuda.is_available():
         print("Using GPU!")
         device = torch.device('cuda')
@@ -288,9 +296,10 @@ def evaluate_advanced_cnn(nb_pairs, batch_size, nb_epochs, print_step, hidden_la
 
     model.eval()
 
-    errors_in_testing = calculate_amount_errors_advanced_cnn(model, test_input, test_target, batch_size)
+    errors_in_testing = calculate_incorrect_classifications_advanced_cnn(model, test_input, test_target, batch_size)
     total_testing = test_input.size(0)
-    error_rate = 100 * errors_in_testing / (total_testing / 2)
+    error_rate = 100 * errors_in_testing / (
+            total_testing / 2)  # The error has to be divided by 2 because of the split of the two input channels
 
     print(f'\nTesting Completed!')
 

@@ -3,25 +3,33 @@ from models import simple_cnn as simple_cnn
 from utils import utils as utils
 
 # Parameters for all models
+print_epochs = 5
+image_pairs = 1000
+
 batch_size = 100
-nb_epochs = 25
-print_step = 5
 hidden_layers = 128
+epochs = 25
 
 # Description: TODO: Add a proper explanation
-# The advanced neural network separates the two channels and predicts separately the value of each image.
-# Using a simple logic comparison we then determine for each pair if the first digit is lesser or equal to the second
+# The SimpleCNN contains 2 inputs and 1 output. It compares the two images in the two channels and makes a prediction
+# straight away to determine for each pair if the first digit is lesser or equal to the second
+
+# The AdvancedCNN  contains 1 input and 10 outputs. It separates the two channels and predicts separately the value of
+# each image. Logic comparison is subsequently used to determine for each pair if the first digit is lesser or equal
+# to the second
 
 if __name__ == "__main__":
     print('\nTraining and Testing all models. Consider grabbing a coffee...')
 
+    # The handling function takes care of the training as well as of the testing of the models
+
     print('\nThe SimpleCNN is being trained and tested...')
-    error_rate_simple_cnn = utils.evaluate_simple_cnn(1000, batch_size, nb_epochs, print_step, hidden_layers,
-                                                      simple_cnn.SimpleConvolutionalNeuralNetwork)
+    error_rate_simple_cnn = utils.handle_simple_cnn(image_pairs, batch_size, epochs, print_epochs, hidden_layers,
+                                                    simple_cnn.SimpleConvolutionalNeuralNetwork)
 
     print('\nThe AdvancedCNN is being trained and tested...')
-    error_rate_advanced_cnn = utils.evaluate_advanced_cnn(1000, batch_size, nb_epochs, print_step, hidden_layers,
-                                                          advanced_cnn.AdvancedConvolutionalNeuralNetwork)
+    error_rate_advanced_cnn = utils.handle_advanced_cnn(image_pairs, batch_size, epochs, print_epochs, hidden_layers,
+                                                        advanced_cnn.AdvancedConvolutionalNeuralNetwork)
 
     print('\nTraining and Testing for all models has been completed!')
     print('Testing 1000 pairs resulted in the following accuracies:')
