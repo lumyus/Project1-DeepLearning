@@ -46,8 +46,9 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
 
             # Calculate training accuracy and print
 
-            accuracy = 100 - 100 * (calculate_incorrect_classifications_simple_cnn(model, train_input,train_target, batch_size)
-                       / (train_input.size(0)))
+            accuracy = 100 - 100 * (
+                        calculate_incorrect_classifications_simple_cnn(model, train_input, train_target, batch_size)
+                        / (train_input.size(0)))
 
             training_accuracy.append(accuracy)
 
@@ -55,7 +56,8 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
 
             # Calculate validation accuracy and print
 
-            accuracy = 100 - 100 * (calculate_incorrect_classifications_simple_cnn(model, validation_input, validation_target,
+            accuracy = 100 - 100 * (
+                        calculate_incorrect_classifications_simple_cnn(model, validation_input, validation_target,
                                                                        batch_size) / (
                             validation_input.size(0)))
             validation_accuracy.append(accuracy)
@@ -109,15 +111,16 @@ def train_model_advanced_cnn(model, train_input, train_target, train_classes, va
             # Calculate training accuracy and print
 
             accuracy = 100 - 100 * (calculate_incorrect_classifications_advanced_cnn(model, train_input, train_target,
-                                                                         batch_size) / (
-                            train_input.size(0)))
+                                                                                     batch_size) / (
+                                        train_input.size(0)))
             training_accuracy.append(accuracy)
 
             print(f'Training Accuracy : {accuracy:.4f}%')
 
             # Calculate validation accuracy and print
 
-            accuracy = 100 - 100 * (calculate_incorrect_classifications_advanced_cnn(model, validation_input, validation_target,
+            accuracy = 100 - 100 * (
+                        calculate_incorrect_classifications_advanced_cnn(model, validation_input, validation_target,
                                                                          batch_size) / (
                             validation_input.size(0)))
             validation_accuracy.append(accuracy)
@@ -261,9 +264,11 @@ def handle_advanced_cnn(image_pairs, batch_size, epochs, print_epochs, hidden_la
     error_rate = 100 * errors_in_testing / (
             total_testing / 2)  # The error has to be divided by 2 because of the split of the two input channels
 
+    testing_accuracy = 100 - error_rate
+
     print(f'\nTesting Completed!')
 
-    return 100 - error_rate, training_accuracy, validation_accuracy
+    return testing_accuracy, training_accuracy, validation_accuracy
 
 
 def calculate_incorrect_classifications_simple_cnn(model, input, target, batch_size):
