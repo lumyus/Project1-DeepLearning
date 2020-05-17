@@ -51,7 +51,6 @@ class SimpleConvolutionalNeuralNetwork(nn.Module):
         # Size: (batch_size, 64 ,2 ,2)
         out = self.conv_2(out)
 
-        # Reshape to match dropout expectancy (batch_size, 256)
         out = out.reshape(out.size(0), -1)
 
         # ReLU activation of last layer
