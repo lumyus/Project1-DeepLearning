@@ -1,6 +1,7 @@
 from torch import nn
 from torch.nn import functional as F
 
+# https://fleuret.org/ee559/src/dlc_practical_4_solution.py as inspiration for this model
 
 class SimpleConvolutionalNeuralNetwork(nn.Module):
 
