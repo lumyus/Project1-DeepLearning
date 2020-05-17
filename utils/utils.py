@@ -47,8 +47,8 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
             # Calculate training accuracy and print
 
             accuracy = 100 - 100 * (
-                        calculate_incorrect_classifications_simple_cnn(model, train_input, train_target, batch_size)
-                        / (train_input.size(0)))
+                    calculate_incorrect_classifications_simple_cnn(model, train_input, train_target, batch_size)
+                    / (train_input.size(0)))
 
             training_accuracy.append(accuracy)
 
@@ -57,9 +57,9 @@ def train_simple_cnn(model, train_input, train_target, validation_input, validat
             # Calculate validation accuracy and print
 
             accuracy = 100 - 100 * (
-                        calculate_incorrect_classifications_simple_cnn(model, validation_input, validation_target,
-                                                                       batch_size) / (
-                            validation_input.size(0)))
+                    calculate_incorrect_classifications_simple_cnn(model, validation_input, validation_target,
+                                                                   batch_size) / (
+                        validation_input.size(0)))
             validation_accuracy.append(accuracy)
 
             print(f'Validation Accuracy : {accuracy:.4f}%')
@@ -120,9 +120,9 @@ def train_model_advanced_cnn(model, train_input, train_target, train_classes, va
             # Calculate validation accuracy and print
 
             accuracy = 100 - 100 * (
-                        calculate_incorrect_classifications_advanced_cnn(model, validation_input, validation_target,
-                                                                         batch_size) / (
-                            validation_input.size(0)))
+                    calculate_incorrect_classifications_advanced_cnn(model, validation_input, validation_target,
+                                                                     batch_size) / (
+                        validation_input.size(0)))
             validation_accuracy.append(accuracy)
 
             print(f'Validation Accuracy : {accuracy:.4f}%')

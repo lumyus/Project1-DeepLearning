@@ -15,14 +15,14 @@ class AdvancedConvolutionalNeuralNetwork(nn.Module):
             nn.Conv2d(1, 32, kernel_size=5, stride=1, padding=2),
             nn.BatchNorm2d(32),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2))
+            nn.MaxPool2d(kernel_size=2, stride=3))
 
         # Second layer
         # 32 channels as input
         # 64 channels as output
 
         self.conv_2 = nn.Sequential(
-            nn.Conv2d(32, 64, kernel_size=4, stride=1, padding=2),
+            nn.Conv2d(32, 64, kernel_size=5, stride=1, padding=2),
             nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2))
@@ -35,9 +35,9 @@ class AdvancedConvolutionalNeuralNetwork(nn.Module):
         # Second layer (7 -4 +2*2)/1 +1 = 8/2 = 4
 
         # Third layer
-        # 1024 channels as input
+        # 256 channels as input
         # hidden_layers as output
-        self.fc_1 = nn.Linear(4 * 4 * 64, hidden_layers)
+        self.fc_1 = nn.Linear(2 * 2 * 64, hidden_layers)
 
         # Fourth layer
         # hidden_layers as input
@@ -50,17 +50,17 @@ class AdvancedConvolutionalNeuralNetwork(nn.Module):
         out = self.conv_1(x)
 
         # Activation of second convolution
-        # Size: (batch_size, 64 ,4 ,4)
+        # Size: (batch_size, 64 ,2 ,2)
         out = self.conv_2(out)
 
-        # Reshape to match dropout expectancy (batch_size, 1024)
+        # Reshape to match dropout expectancy (batch_size, 256)
         out = out.reshape(out.size(0), -1)
 
         # Dropout
         out = self.drop_out(out)
 
         # ReLU activation of last layer
-        out = F.relu(self.fc_1(out.view(-1, 4 * 4 * 64)))
+        out = F.relu(self.fc_1(out.view(-1, 2 * 2 * 64)))
 
         out = self.fc_2(out)
         return out
