@@ -16,7 +16,7 @@ class AdvancedConvolutionalNeuralNetwork(nn.Module):
             nn.Conv2d(1, 32, kernel_size=5, stride=1, padding=2),
             nn.BatchNorm2d(32),
             nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=3))
+            nn.MaxPool2d(kernel_size=3, stride=3))
 
         # Second layer
         # 32 channels as input
