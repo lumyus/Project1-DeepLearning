@@ -10,7 +10,7 @@ batch_size = 100
 hidden_layers = 128
 epochs = 25
 
-# Description: TODO: Add a proper explanation
+# Description
 # The SimpleCNN contains 2 inputs and 1 output. It compares the two images in the two channels and makes a prediction
 # straight away to determine for each pair if the first digit is lesser or equal to the second
 
