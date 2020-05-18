@@ -2,8 +2,6 @@ import statistics
 
 from models import advanced_cnn as advanced_cnn
 from models import simple_cnn as simple_cnn
-
-# Parameters for all models
 from utils import utils
 
 print_epochs = 5
@@ -61,10 +59,16 @@ if __name__ == "__main__":
 
     print('\nEvaluation for 10 rounds has been completed!')
 
-    print(f'SimpleCNN training accuracy mean +/- stdev: {training_accuracies_simple_cnn_mean:.2f}% +/- {training_accuracies_simple_cnn_std:.2f}%')
-    print(f'SimpleCNN validation accuracy mean +/- stdev: {validation_accuracies_simple_cnn_mean:.2f}% +/- {validation_accuracies_simple_cnn_std:.2f}%')
-    print(f'SimpleCNN testing accuracy mean +/- stdev: {testing_accuracies_simple_cnn_mean:.2f}% +/- {testing_accuracies_simple_cnn_std:.2f}%')
+    print(
+        f'SimpleCNN training accuracy mean +/- stdev: {training_accuracies_simple_cnn_mean:.2f}% +/- {training_accuracies_simple_cnn_std:.2f}%')
+    print(
+        f'SimpleCNN validation accuracy mean +/- stdev: {validation_accuracies_simple_cnn_mean:.2f}% +/- {validation_accuracies_simple_cnn_std:.2f}%')
+    print(
+        f'SimpleCNN testing accuracy mean +/- stdev: {testing_accuracies_simple_cnn_mean:.2f}% +/- {testing_accuracies_simple_cnn_std:.2f}%')
 
-    print(f'AdvancedCNN training accuracy mean +/- stdev: {training_accuracies_advanced_cnn_mean:.2f}% +/- {training_accuracies_advanced_cnn_std:.2f}%')
-    print(f'AdvancedCNN validation accuracy mean +/- stdev: {validation_accuracies_advanced_cnn_mean:.2f}% +/- {validation_accuracies_advanced_cnn_std:.2f}%')
-    print(f'AdvancedCNN testing accuracy mean +/- stdev: {testing_accuracies_advanced_cnn_mean:.2f}% +/- {testing_accuracies_advanced_cnn_std:.2f}%')
+    print(
+        f'AdvancedCNN training accuracy mean +/- stdev: {training_accuracies_advanced_cnn_mean:.2f}% +/- {training_accuracies_advanced_cnn_std:.2f}%')
+    print(
+        f'AdvancedCNN validation accuracy mean +/- stdev: {validation_accuracies_advanced_cnn_mean:.2f}% +/- {validation_accuracies_advanced_cnn_std:.2f}%')
+    print(
+        f'AdvancedCNN testing accuracy mean +/- stdev: {testing_accuracies_advanced_cnn_mean:.2f}% +/- {testing_accuracies_advanced_cnn_std:.2f}%')
